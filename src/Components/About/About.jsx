@@ -3,13 +3,13 @@ import Footer from "../Footer/Footer";
 
 export default function About() {
   return (
-    <>
-    <div className="p-20 mt-16 bg-gray-900 h-110">
-      <div className="text-4xl font-medium text-white underline w-80 decoration-orange-600 underline-offset-8">
+    <div className="h-screen">
+    <div className="pb-5 bg-gray-900 lg:h-120 lg:pt-40 md:pt-40 sm:pt-28 phone:pt-20 lg:px-20 md:px-14 sm:px-12 phone:px-6">
+      <div className="font-medium text-orange-600 underline lg:text-4xl md:text-4xl sm:text-4xl phone:text-lg lg:w-72 md:w-72 sm:w-72 phone:w-40 decoration-orange-600 underline-offset-8">
         About TODOIST
       </div>
       <br></br>
-      <p className="mr-40 text-white">
+      <p className="text-white bg-gray-900">
         A Todo Website is an essential tool for individuals and teams looking to
         boost their productivity and stay organized. By providing a dedicated
         space for task management, these websites help users clarify their
@@ -39,6 +39,6 @@ export default function About() {
       </p>
     </div>
     <Footer/>
-    </>
+    </div>
   );
 }

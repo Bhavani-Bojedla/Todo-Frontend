@@ -1,6 +1,5 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
 import React, { useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
@@ -15,6 +14,7 @@ const Todo = () => {
   const [updatedBody, setUpdatedBody] = useState("");
   const [updateId, setUpdateId] = useState(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [loading, setLoading] = useState(false); 
 
   const id = localStorage.getItem("id");
 
@@ -28,6 +28,7 @@ const Todo = () => {
       toast.error("Title Or Body Can't Be Empty");
     } else {
       if (id) {
+        setLoading(true); 
         await axios
           .post("https://todo-backend-3g62.onrender.com/lists/createlist", {
             title: inputs.title,
@@ -36,6 +37,8 @@ const Todo = () => {
           })
           .then((response) => {
             setTasks([ response.data.list,...tasks]);
+          }).finally(() => {
+            setLoading(false); // Stop loading once the request is done
           });
         setInputs({ title: "", body: "" });
         toast.success("Your Task Is Added");
@@ -139,12 +142,16 @@ const Todo = () => {
     : tasks.filter((task) => !task.completed);
 
   return (
-    <div className="h-screen pt-28">
-      <ToastContainer className="mt-11" />
-      <div className="pt-6 bg-gray-900 todo">
-        <div className="flex flex-col p-6 mx-auto bg-orange-400 rounded-md place-items-center todo-main w-90 ">
+    <div className="h-screen lg:pt-28 md:pt-28 sm:pt-24 phone:pt-24">
+    <ToastContainer 
+      className=" sm:max-w-[300px] sm:min-h-[50px] sm:max-h-[80px] lg:max-w-[300px] lg:p-4 md:max-w-[300px] phone:max-w-[265px] phone:text-sm z-50" 
+      style={{ top: '60px' }} 
+    />
+
+    <div className="bg-gray-900 lg:mt-6 md:mt-6 sm:mt-10 phone:mt-8 todo">
+      <div className="flex flex-col p-6 mx-auto bg-orange-400 rounded-md place-items-center todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
           <input
-            className="p-2.5 border-gray-300 rounded-md outline-offset-0 outline-slate-100 w-85"
+            className="p-2.5 border-gray-300 rounded-md outline-offset-0 outline-slate-100 lg:w-85 md:w-85 sm:w-80 phone:w-64"
             type="text"
             name="title"
             placeholder="Title"
@@ -157,18 +164,19 @@ const Todo = () => {
             value={inputs.body}
             name="body"
             onChange={change}
-            className="p-2.5 mt-5 border-gray-300 rounded-md outline-slate-100 w-85"
+            className="p-2.5 mt-5 border-gray-300 rounded-md outline-slate-100 lg:w-85 md:w-85 sm:w-80 phone:w-64"
           />
         </div>
-        <div className="flex flex-col pt-5 mx-auto place-items-end todo-main w-90">
+        <div className="flex flex-col pt-5 mx-auto place-items-end todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
           <button
             onClick={handleAddTask}
             className="flex justify-center w-16 py-2.5 text-white bg-orange-600 rounded-md text-xs hover:bg-orange-700"
+            disabled={loading} 
           >
-            Add
+           {loading ? "Loading..." : "Add"}
           </button>
         </div>
-        <div className="flex items-center justify-between mx-auto w-52 mt-14">
+        <div className="flex items-center justify-between mx-auto w-52 lg:mt-10 phone:mt-6">
           <button
             onClick={() => setShowCompleted(false)}
             className="flex justify-center w-20 py-2.5 text-white bg-orange-600 rounded-md text-sm hover:bg-orange-700"
@@ -185,9 +193,9 @@ const Todo = () => {
 
         {updateId && (
           <div className="">
-            <div className="flex flex-col p-6 mx-auto mt-5 bg-orange-400 rounded-md m place-items-center todo-main w-90">
+            <div className="flex flex-col p-6 mx-auto mt-5 bg-orange-400 rounded-md place-items-center todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
               <input
-                className="p-2.5 border-gray-300 rounded-md outline-offset-0 outline-slate-100 w-85"
+                className="p-2.5 border-gray-300 rounded-md outline-offset-0 outline-slate-100 lg:w-85 md:w-85 sm:w-80 phone:w-64"
                 type="text"
                 placeholder="Updated Title"
                 value={updatedTitle}
@@ -197,11 +205,11 @@ const Todo = () => {
                 type="text"
                 placeholder="Updated Body"
                 value={updatedBody}
-                className="p-2.5 mt-5 border-gray-300 rounded-md outline-slate-100 w-85"
+                className="p-2.5 mt-5 border-gray-300 rounded-md outline-slate-100 lg:w-85 md:w-85  sm:w-80 phone:w-64"
                 onChange={(e) => setUpdatedBody(e.target.value)}
               />
             </div>
-            <div className="flex flex-col pt-5 mx-auto place-items-end todo-main w-90">
+            <div className="flex flex-col pt-5 mx-auto place-items-end todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
               <button
                 onClick={handleUpdateSubmit}
                 className="flex justify-center w-20 py-2.5 text-white bg-orange-600 rounded-md text-xs hover:bg-orange-700"
@@ -213,7 +221,7 @@ const Todo = () => {
         )}
 
         <div className="pt-5 pb-5 mx-auto todo-main">
-          <div className="mx-auto mt-8 space-y-4 w-100">
+          <div className="mx-auto space-y-4 lg:mt-8 lg:w-100 md:w-100 sm:w-98 phone:w-72">
             {filteredTasks.map((task, index) => (
               <div
                 key={index}
@@ -231,14 +239,14 @@ const Todo = () => {
                   <div>
                     <h3
                       className={`text-lg text-orange-500 font-semibold ${
-                        task.completed ? "line-through text-white" : "text-orange-400"
+                        task.completed ? "line-through " : ""
                       }`}
                     >
                       {task.title}
                     </h3>
                     <p
                       className={`text-gray-400 font-semibold break-words ${
-                        task.completed ? "line-through text-gray-700" : "text-gray-400"
+                        task.completed ? "line-through text-gray-400" : "text-gray-400"
                       }`}
                     >
                       {task.body}

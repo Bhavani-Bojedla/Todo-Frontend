@@ -24,7 +24,7 @@ function App() {
   
   return (
    
-      <div className='bg-gray-900'>
+      <div className='w-full h-screen bg-gray-900'>
         <Router>
           <Navbar/>
           <Routes>

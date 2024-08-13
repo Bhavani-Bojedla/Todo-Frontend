@@ -9,12 +9,15 @@ export default {
         "todo":"url('todo.svg')"
       },
       spacing:{
-
+        22:'5.5rem',
+        73:'18rem',
+        75:'19rem',
         85:'22rem',
         90:'25.5rem',
         98:'29rem',
         100:'35rem',
-        110:'40rem'
+        110:'40rem',
+        120:'44rem'
 
       },
       screens: {
