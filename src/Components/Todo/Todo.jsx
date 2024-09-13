@@ -14,6 +14,9 @@ const Todo = () => {
   const [updatedBody, setUpdatedBody] = useState("");
   const [updateId, setUpdateId] = useState(null);
   const [showCompleted, setShowCompleted] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false); // For delete confirmation
+  const [deleteTaskId, setDeleteTaskId] = useState(null);
   const [loading, setLoading] = useState(false); 
 
   const id = localStorage.getItem("id");
@@ -38,7 +41,7 @@ const Todo = () => {
           .then((response) => {
             setTasks([ response.data.list,...tasks]);
           }).finally(() => {
-            setLoading(false); // Stop loading once the request is done
+            setLoading(false); 
           });
         setInputs({ title: "", body: "" });
         toast.success("Your Task Is Added");
@@ -64,19 +67,26 @@ const Todo = () => {
     }
   }, [id]);
 
-  const handleDeleteTask = async (taskId) => {
-    if (id) {
+
+  const handleDeleteTask = async () => {
+    if (id && deleteTaskId) {
       await axios
-        .delete(`https://todo-backend-3g62.onrender.com/lists/deletelist/${taskId}`, {
+        .delete(`https://todo-backend-3g62.onrender.com/lists/deletelist/${deleteTaskId}`, {
           data: { id: id },
         })
         .then(() => {
-          setTasks(tasks.filter((task) => task._id !== taskId));
+          setTasks(tasks.filter((task) => task._id !== deleteTaskId));
           toast.success("Your task is deleted");
+          setShowDeleteModal(false);
         });
     } else {
-      toast.error("Please signup!");
+      toast.error("Please sign up!");
     }
+  };
+
+  const confirmDeleteTask = (taskId) => {
+    setDeleteTaskId(taskId);
+    setShowDeleteModal(true); 
   };
 
   const handleUpdateTask = (taskId) => {
@@ -84,6 +94,7 @@ const Todo = () => {
     setUpdatedTitle(taskToUpdate.title);
     setUpdatedBody(taskToUpdate.body);
     setUpdateId(taskId);
+    setShowUpdateModal(true); 
   };
 
   const handleUpdateSubmit = async () => {
@@ -102,6 +113,7 @@ const Todo = () => {
               )
             );
             toast.success("Task updated successfully");
+            setShowUpdateModal(false); 
           });
         setUpdatedTitle("");
         setUpdatedBody("");
@@ -147,6 +159,64 @@ const Todo = () => {
       className=" sm:max-w-[300px] sm:min-h-[50px] sm:max-h-[80px] lg:max-w-[300px] lg:p-4 md:max-w-[300px] phone:max-w-[265px] phone:text-sm z-50" 
       style={{ top: '60px' }} 
     />
+     {showDeleteModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 bg-white rounded-lg shadow-lg">
+            <h2 className="mb-4 text-xl font-bold">Confirm Deletion</h2>
+            <p>Are you sure you want to delete this task?</p>
+            <div className="flex justify-end mt-4">
+              <button
+                onClick={() => setShowDeleteModal(false)} 
+                className="px-4 py-2 mr-2 text-white bg-gray-600 rounded hover:bg-gray-700"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDeleteTask} 
+                className="px-4 py-2 text-white bg-red-600 rounded hover:bg-red-700"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+     {showUpdateModal && (
+      <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-10">
+        <div className="max-w-lg px-6 py-5 mt-24 bg-orange-400 rounded-lg shadow-lg">
+          <h2 className="mb-4 text-lg font-bold text-gray-900">Update Task</h2>
+          <input
+            type="text"
+            value={updatedTitle}
+            onChange={(e) => setUpdatedTitle(e.target.value)}
+            placeholder="Updated Title"
+            className="w-full p-2 mb-4 rounded outline-offset-0 outline-slate-300"
+          />
+          <textarea
+            value={updatedBody}
+            onChange={(e) => setUpdatedBody(e.target.value)}
+            placeholder="Updated Body"
+            className="w-full p-2 mb-4 rounded outline-offset-0 outline-slate-300"
+          />
+          <div className="flex justify-end">
+            <button
+              onClick={() => setShowUpdateModal(false)}
+              className="px-3 py-2 mr-2 font-semibold text-white bg-gray-600 rounded hover:bg-gray-700"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleUpdateSubmit}
+              className="px-3 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
+
 
     <div className="bg-gray-900 lg:mt-6 md:mt-6 sm:mt-10 phone:mt-8 todo">
       <div className="flex flex-col p-6 mx-auto bg-orange-400 rounded-md place-items-center todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
@@ -191,35 +261,6 @@ const Todo = () => {
           </button>
         </div>
 
-        {updateId && (
-          <div className="">
-            <div className="flex flex-col p-6 mx-auto mt-5 bg-orange-400 rounded-md place-items-center todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
-              <input
-                className="p-2.5 border-gray-300 rounded-md outline-offset-0 outline-slate-100 lg:w-85 md:w-85 sm:w-80 phone:w-64"
-                type="text"
-                placeholder="Updated Title"
-                value={updatedTitle}
-                onChange={(e) => setUpdatedTitle(e.target.value)}
-              />
-              <textarea
-                type="text"
-                placeholder="Updated Body"
-                value={updatedBody}
-                className="p-2.5 mt-5 border-gray-300 rounded-md outline-slate-100 lg:w-85 md:w-85  sm:w-80 phone:w-64"
-                onChange={(e) => setUpdatedBody(e.target.value)}
-              />
-            </div>
-            <div className="flex flex-col pt-5 mx-auto place-items-end todo-main lg:w-90 md:w-90 sm:w-85 phone:w-72">
-              <button
-                onClick={handleUpdateSubmit}
-                className="flex justify-center w-20 py-2.5 text-white bg-orange-600 rounded-md text-xs hover:bg-orange-700"
-              >
-                Update
-              </button>
-            </div>
-          </div>
-        )}
-
         <div className="pt-5 pb-5 mx-auto todo-main">
           <div className="mx-auto space-y-4 lg:mt-8 lg:w-100 md:w-100 sm:w-98 phone:w-72">
             {filteredTasks.map((task, index) => (
@@ -260,7 +301,7 @@ const Todo = () => {
                   Update
                 </button>
                 <button
-                  onClick={() => handleDeleteTask(task._id)}
+                  onClick={() => confirmDeleteTask(task._id)}
                   className="text-red-500 hover:text-red-800"
                 >
                   <MdDelete className="h-7 w-7" />
