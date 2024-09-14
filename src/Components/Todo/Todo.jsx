@@ -1,6 +1,6 @@
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
 
@@ -46,7 +46,7 @@ const Todo = () => {
         setInputs({ title: "", body: "" });
         toast.success("Your Task Is Added");
       } else {
-        setTasks([, inputs,...tasks]);
+        setTasks([inputs,...tasks]);
         setInputs({ title: "", body: "" });
         toast.success("Your Task Is Added");
         toast.error("Your Task Is Not Saved! Please SignUp");
@@ -85,16 +85,32 @@ const Todo = () => {
   };
 
   const confirmDeleteTask = (taskId) => {
-    setDeleteTaskId(taskId);
-    setShowDeleteModal(true); 
+    // console.log(taskId);
+    if(taskId)
+    {
+      setDeleteTaskId(taskId);
+      setShowDeleteModal(true); 
+    }
+    else
+    {
+      toast.error("Please sign up to delete this task !");
+    }
   };
 
   const handleUpdateTask = (taskId) => {
-    const taskToUpdate = tasks.find((task) => task._id === taskId);
-    setUpdatedTitle(taskToUpdate.title);
-    setUpdatedBody(taskToUpdate.body);
-    setUpdateId(taskId);
-    setShowUpdateModal(true); 
+    console.log(taskId);
+    if(taskId)
+    {
+      const taskToUpdate = tasks.find((task) => task._id === taskId);
+      setUpdatedTitle(taskToUpdate.title);
+      setUpdatedBody(taskToUpdate.body);
+      setUpdateId(taskId);
+      setShowUpdateModal(true); 
+    }
+    else
+    {
+      toast.error("Please sign up first to update !");
+    }
   };
 
   const handleUpdateSubmit = async () => {
@@ -122,31 +138,40 @@ const Todo = () => {
         console.error("Error updating task:", error);
       }
     } else {
-      toast.error("Please fill out all fields");
+      toast.error("Please sign up!");
     }
   };
 
   const handleToggleCompletion = async (taskId) => {
     const taskToToggle = tasks.find((task) => task._id === taskId);
-    if (taskToToggle) {
-      const updatedTask = { ...taskToToggle, completed: !taskToToggle.completed };
-      try {
-        await axios.put(`https://todo-backend-3g62.onrender.com/lists/updatelist/${taskId}`, {
-          title: updatedTask.title,
-          body: updatedTask.body,
-          completed: updatedTask.completed,
-          id: id,
-        });
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
-            task._id === taskId ? updatedTask : task
-          )
-        );
-        toast.success("Task completion status updated");
-      } catch (error) {
-        console.error("Error updating task completion status:", error);
+    // console.log(taskId);
+    if(taskId)
+    {
+      if (taskToToggle) {
+        const updatedTask = { ...taskToToggle, completed: !taskToToggle.completed };
+        try {
+          await axios.put(`https://todo-backend-3g62.onrender.com/lists/updatelist/${taskId}`, {
+            title: updatedTask.title,
+            body: updatedTask.body,
+            completed: updatedTask.completed,
+            id: id,
+          });
+          setTasks((prevTasks) =>
+            prevTasks.map((task) =>
+              task._id === taskId ? updatedTask : task
+            )
+          );
+          toast.success("Task completion status updated");
+        } catch (error) {
+          console.error("Error updating task completion status:", error);
+        }
       }
     }
+    else
+    {
+      toast.error("Please sign up first!");
+    }
+   
   };
 
   const filteredTasks = showCompleted
