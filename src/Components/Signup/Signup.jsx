@@ -23,7 +23,7 @@ export default function Signup() {
       let inputObj = { Username, Email, Password };
       console.log(inputObj);
       
-      let url = "https://todo-backend-3g62.onrender.com/users/createuser";
+      let url = "https://todo-backend-lime.vercel.app/users/createuser";
       axios.post(url, inputObj)
         .then((res) => {
           if (res.status === 200) {

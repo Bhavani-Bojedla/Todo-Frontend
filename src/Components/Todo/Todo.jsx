@@ -33,7 +33,7 @@ const Todo = () => {
       if (id) {
         setLoading(true); 
         await axios
-          .post("https://todo-backend-3g62.onrender.com/lists/createlist", {
+          .post("https://todo-backend-lime.vercel.app/lists/createlist", {
             title: inputs.title,
             body: inputs.body,
             id: id,
@@ -58,7 +58,7 @@ const Todo = () => {
     if (id) {
       const fetchTasks = async () => {
         await axios
-          .get(`https://todo-backend-3g62.onrender.com/lists/getlist/${id}`)
+          .get(`https://todo-backend-lime.vercel.app/lists/getlist/${id}`)
           .then((response) => {
             setTasks(response.data.list || []);
           });
@@ -71,7 +71,7 @@ const Todo = () => {
   const handleDeleteTask = async () => {
     if (id && deleteTaskId) {
       await axios
-        .delete(`https://todo-backend-3g62.onrender.com/lists/deletelist/${deleteTaskId}`, {
+        .delete(`https://todo-backend-lime.vercel.app/lists/deletelist/${deleteTaskId}`, {
           data: { id: id },
         })
         .then(() => {
@@ -101,7 +101,7 @@ const Todo = () => {
     if (updatedTitle && updatedBody && updateId) {
       try {
         await axios
-          .put(`https://todo-backend-3g62.onrender.com/lists/updatelist/${updateId}`, {
+          .put(`https://todo-backend-lime.vercel.app/lists/updatelist/${updateId}`, {
             title: updatedTitle,
             body: updatedBody,
             id: id,
@@ -131,7 +131,7 @@ const Todo = () => {
     if (taskToToggle) {
       const updatedTask = { ...taskToToggle, completed: !taskToToggle.completed };
       try {
-        await axios.put(`https://todo-backend-3g62.onrender.com/lists/updatelist/${taskId}`, {
+        await axios.put(`https://todo-backend-lime.vercel.app/lists/updatelist/${taskId}`, {
           title: updatedTask.title,
           body: updatedTask.body,
           completed: updatedTask.completed,
